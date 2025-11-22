@@ -1,0 +1,83 @@
+# Configuració local
+git-config.json
+*.local.json
+
+# Fitxers temporals
+*.tmp
+*.log
+*.bak
+*~
+*.swp
+*.swo
+
+# Fitxers del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# IDEs i editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# PHP
+vendor/
+composer.lock
+*.php.bak
+
+# Configuració sensible
+config.local.php
+.env
+.env.local
+
+# Backups
+*.backup
+BACKUPS/
+backups/
+
+# Logs
+logs/
+*.log
+
+# Bases de dades locals
+*.db
+*.sqlite
+*.sql.bak
+
+# Node (si s'utilitza)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Fitxers de sistema Windows
+$RECYCLE.BIN/
+Desktop.ini

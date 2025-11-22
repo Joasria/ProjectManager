@@ -1,0 +1,337 @@
+/* ==================== COMPLEX NODES ==================== */
+
+/* Complex Node Container */
+.tree-node.complex-node {
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-lg);
+    margin: var(--space-md) 0;
+    background: var(--bg-secondary);
+    overflow: hidden;
+    width: 100%; /* Ocupar tot l'ample disponible */
+    display: flex;
+    flex-direction: column; /* Header i body apilats verticalment */
+}
+
+/* Complex Header */
+.complex-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    cursor: pointer;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+}
+
+.complex-header:hover {
+    background: var(--bg-hover);
+}
+
+.template-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.template-badge {
+    margin-left: auto;
+    padding: 4px 12px;
+    background: var(--primary);
+    color: white;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-complex-expand {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-secondary);
+    padding: 4px 8px;
+    transition: transform 0.2s;
+}
+
+.btn-complex-expand:hover {
+    color: var(--text-primary);
+}
+
+.btn-complex-expand.collapsed {
+    transform: rotate(-90deg);
+}
+
+/* Complex Body */
+.complex-body {
+    padding: var(--space-lg);
+    width: 100%; /* Ocupar tot l'ample */
+    box-sizing: border-box; /* Incloure padding en el width */
+}
+
+.complex-empty {
+    padding: var(--space-xl);
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ==================== SELECTOR FORM (Radio buttons) ==================== */
+
+.selector-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.radio-option:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary);
+}
+
+.radio-option input[type="radio"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.radio-option label {
+    cursor: pointer;
+    flex: 1;
+    font-size: var(--font-base);
+    user-select: none;
+}
+
+.selected-info {
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--status-verd);
+    color: white;
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+}
+
+/* ==================== CHECK FORM (Checkboxes) ==================== */
+
+.check-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.check-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.check-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.check-option:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary);
+}
+
+.check-option input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.check-option label {
+    cursor: pointer;
+    flex: 1;
+    font-size: var(--font-base);
+    user-select: none;
+}
+
+.check-summary {
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* ==================== GENERIC FORM ==================== */
+
+.generic-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: var(--font-sm);
+    color: var(--text-primary);
+}
+
+.form-field.required label::after {
+    content: ' *';
+    color: var(--status-vermell);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-base);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 59, 130, 246), 0.1);
+}
+
+.form-field textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-action {
+    padding: 10px 24px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--font-base);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.form-action.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.form-action.primary:hover {
+    background: var(--primary-dark, #2563eb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-action.secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.form-action.secondary:hover {
+    background: var(--bg-hover);
+}
+
+.form-separator {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-sm) 0;
+}
+
+.form-separator.with-title {
+    height: auto;
+    background: none;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: var(--space-lg) 0 var(--space-sm) 0;
+}
+
+.form-info {
+    padding: var(--space-md);
+    background: var(--bg-primary);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    line-height: 1.6;
+}
+
+.form-info.info-warning {
+    background: rgba(255, 152, 0, 0.1);
+    border-left-color: var(--status-taronja);
+    color: var(--text-primary);
+}
+
+.form-info.info-error {
+    background: rgba(239, 68, 68, 0.1);
+    border-left-color: var(--status-vermell);
+    color: var(--text-primary);
+}
+
+.form-info.info-success {
+    background: rgba(34, 197, 94, 0.1);
+    border-left-color: var(--status-verd);
+    color: var(--text-primary);
+}
+
+.form-generic {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-primary);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+}
+
+/* Template Warning (per templates no trobades) */
+.template-warning {
+    padding: var(--space-md);
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid var(--status-taronja);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+}
+
+.template-warning strong {
+    color: var(--status-taronja);
+}
