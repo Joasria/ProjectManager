@@ -1,73 +1,25 @@
 /* ==================== COMPLEX NODES ==================== */
 
-/* Complex Node Container */
-.tree-node.complex-node {
+/* Complex Node Container - Variant visual del wrapper base */
+.tree-node-wrapper.complex {
     border: 2px solid var(--primary);
     border-radius: var(--radius-lg);
-    margin: var(--space-md) 0;
-    background: var(--bg-secondary);
-    overflow: hidden;
-    width: 100%; /* Ocupar tot l'ample disponible */
-    display: flex;
-    flex-direction: column; /* Header i body apilats verticalment */
 }
 
-/* Complex Header */
-.complex-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-md) var(--space-lg);
-    cursor: pointer;
+/* Complex Header - Variant del node-header base */
+.node-header.complex {
+    border-bottom: 1px solid var(--border-color);
     background: var(--bg-primary);
-    border-bottom: 1px solid var(--border);
-    transition: background 0.2s;
+    padding: var(--space-md) var(--space-lg);
 }
 
-.complex-header:hover {
+.node-header.complex:hover {
     background: var(--bg-hover);
 }
 
-.template-icon {
-    font-size: 24px;
-    line-height: 1;
-}
-
-.template-badge {
-    margin-left: auto;
-    padding: 4px 12px;
-    background: var(--primary);
-    color: white;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.btn-complex-expand {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: var(--text-secondary);
-    padding: 4px 8px;
-    transition: transform 0.2s;
-}
-
-.btn-complex-expand:hover {
-    color: var(--text-primary);
-}
-
-.btn-complex-expand.collapsed {
-    transform: rotate(-90deg);
-}
-
-/* Complex Body */
-.complex-body {
+/* Complex Body - Contingut desplegable específic de complex */
+.node-body.complex {
     padding: var(--space-lg);
-    width: 100%; /* Ocupar tot l'ample */
-    box-sizing: border-box; /* Incloure padding en el width */
 }
 
 .complex-empty {

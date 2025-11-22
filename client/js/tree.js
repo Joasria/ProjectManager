@@ -2,11 +2,11 @@
 
 const Tree = {
     
-    // Timers per auto-save
-    saveTimers: new Map(),
-    
     // ==================== RENDER MAIN ====================
-    render() {
+    async render() {
+        // ABANS DE REGENERAR: Guardar camps amb focus (si n'hi ha)
+        this.saveCurrentlyFocusedField();
+        
         const container = document.getElementById('treeContainer');
         container.innerHTML = '';
         
@@ -26,6 +26,39 @@ const Tree = {
         });
         
         container.appendChild(tree);
+    },
+    
+    // ==================== SAVE CURRENTLY FOCUSED FIELD ====================
+    saveCurrentlyFocusedField() {
+        const activeElement = document.activeElement;
+        
+        // Si és un textarea de memo
+        if (activeElement?.classList.contains('node-textarea')) {
+            const entryId = activeElement.dataset.entryId;
+            const content = activeElement.value;
+            if (entryId) {
+                this.saveMemoContent(entryId, content);
+            }
+        }
+        
+        // Si és un input d'URL
+        if (activeElement?.classList.contains('node-url-input')) {
+            const entryId = activeElement.dataset.entryId;
+            const url = activeElement.value;
+            if (entryId) {
+                this.saveUrlContent(entryId, url);
+            }
+        }
+        
+        // Si és un input de form
+        if (activeElement?.closest('.form-field')) {
+            const fieldId = activeElement.closest('[data-field-id]')?.dataset.fieldId;
+            const value = activeElement.value;
+            if (fieldId && value !== undefined) {
+                API.updateEntry(fieldId, { content: value })
+                    .catch(err => console.error(`Error guardant field ${fieldId}:`, err));
+            }
+        }
     },
     
     // ==================== RENDER NODE (AMB DETECCIÓ COMPLEX) ====================
@@ -61,23 +94,23 @@ const Tree = {
             return this.renderSimpleNode(entry);
         }
         
-        const container = document.createElement('div');
-        container.className = 'tree-node complex-node';
-        container.dataset.type = entry.entry_type;
-        container.dataset.id = entry.id;
-        container.dataset.status = entry.status_color || 'blanc';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tree-node-wrapper complex';
+        wrapper.dataset.type = entry.entry_type;
+        wrapper.dataset.id = entry.id;
+        wrapper.dataset.status = entry.status_color || 'blanc';
         
         // Header del complex node
         const header = this.createComplexHeader(entry, template);
-        container.appendChild(header);
+        wrapper.appendChild(header);
         
         // Body amb els fills renderitzats per la template
         const body = document.createElement('div');
-        body.className = 'complex-body';
+        body.className = 'node-body complex';
         
         const isExpanded = StateHelpers.isNodeExpanded(entry.id);
-        if (!isExpanded) {
-            body.style.display = 'none';
+        if (isExpanded) {
+            body.classList.add('expanded');
         }
         
         if (entry.children && entry.children.length > 0) {
@@ -91,35 +124,29 @@ const Tree = {
             body.appendChild(empty);
         }
         
-        container.appendChild(body);
+        wrapper.appendChild(body);
         
         // Toggle expand/collapse al click del header
-        header.addEventListener('click', (e) => {
+        header.addEventListener('click', async (e) => {
             // No toggle si es fa click en botons d'acció
-            if (e.target.closest('.node-actions') || e.target.closest('.btn-complex-expand')) {
+            if (e.target.closest('.node-actions') || e.target.closest('.btn-node-expand')) {
                 return;
             }
-            this.toggleNodeExpansion(entry.id);
+            await this.toggleNodeExpansion(entry.id);
         });
         
-        return container;
+        return wrapper;
     },
     
     // ==================== CREATE COMPLEX HEADER ====================
     createComplexHeader(entry, template) {
         const header = document.createElement('div');
-        header.className = 'complex-header';
+        header.className = 'node-header complex';
         
         // Status dot
         const statusDot = document.createElement('div');
         statusDot.className = `status-dot ${entry.status_color || 'blanc'}`;
         header.appendChild(statusDot);
-        
-        // Icon de la template
-        const icon = document.createElement('span');
-        icon.className = 'template-icon';
-        icon.textContent = template.icon;
-        header.appendChild(icon);
         
         // Title
         const title = document.createElement('span');
@@ -127,11 +154,10 @@ const Tree = {
         title.innerHTML = entry.title; // Renderitzar HTML
         header.appendChild(title);
         
-        // Badge amb nom de template
-        const badge = document.createElement('span');
-        badge.className = 'template-badge';
-        badge.textContent = template.name;
-        header.appendChild(badge);
+        // Tags (buit, per compatibilitat amb layout)
+        const tags = document.createElement('div');
+        tags.className = 'node-tags';
+        header.appendChild(tags);
         
         // Version badge (si és nou)
         if (StateHelpers.isNewEntry(entry)) {
@@ -144,15 +170,15 @@ const Tree = {
         
         // Botó expand/collapse
         const btnExpand = document.createElement('button');
-        btnExpand.className = 'btn-complex-expand';
+        btnExpand.className = 'btn-node-expand';
         const isExpanded = StateHelpers.isNodeExpanded(entry.id);
         btnExpand.textContent = isExpanded ? '▼' : '▶';
         if (!isExpanded) {
             btnExpand.classList.add('collapsed');
         }
-        btnExpand.addEventListener('click', (e) => {
+        btnExpand.addEventListener('click', async (e) => {
             e.stopPropagation();
-            this.toggleNodeExpansion(entry.id);
+            await this.toggleNodeExpansion(entry.id);
         });
         header.appendChild(btnExpand);
         
@@ -351,9 +377,9 @@ const Tree = {
         if (!isExpanded) {
             btnExpand.classList.add('collapsed');
         }
-        btnExpand.addEventListener('click', (e) => {
+        btnExpand.addEventListener('click', async (e) => {
             e.stopPropagation();
-            this.toggleNodeExpansion(entry.id);
+            await this.toggleNodeExpansion(entry.id);
         });
         header.appendChild(btnExpand);
         
@@ -444,18 +470,8 @@ const Tree = {
             textarea.value = entry.content;
             textarea.dataset.entryId = entry.id;
             
-            // Auto-save + onBlur
-            let typingTimer;
-            textarea.addEventListener('input', () => {
-                clearTimeout(typingTimer);
-                textarea.classList.add('saving');
-                typingTimer = setTimeout(() => {
-                    this.saveMemoContent(entry.id, textarea.value);
-                }, 1500); // Auto-save després de 1.5s sense escriure
-            });
-            
+            // NOMÉS onBlur - sense timers
             textarea.addEventListener('blur', () => {
-                clearTimeout(typingTimer);
                 this.saveMemoContent(entry.id, textarea.value);
             });
             
@@ -498,17 +514,8 @@ const Tree = {
             input.value = entry.url;
             input.dataset.entryId = entry.id;
             
-            // Auto-save + onBlur
-            let typingTimer;
-            input.addEventListener('input', () => {
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(() => {
-                    this.saveUrlContent(entry.id, input.value);
-                }, 1500);
-            });
-            
+            // NOMÉS onBlur - sense timers
             input.addEventListener('blur', () => {
-                clearTimeout(typingTimer);
                 this.saveUrlContent(entry.id, input.value);
             });
             
@@ -541,21 +548,10 @@ const Tree = {
         textarea.dataset.entryId = entryId;
         textarea.focus();
         
-        // Auto-save + onBlur
-        let typingTimer;
-        textarea.addEventListener('input', () => {
-            clearTimeout(typingTimer);
-            textarea.classList.add('saving');
-            typingTimer = setTimeout(() => {
-                this.saveMemoContent(entryId, textarea.value);
-            }, 1500);
-        });
-        
+        // ONÉS onBlur - sense timers
         textarea.addEventListener('blur', () => {
-            clearTimeout(typingTimer);
             if (textarea.value.trim() === '') {
-                // Si està buit, tornar a mostrar botó afegir
-                App.loadTree();
+                App.loadTree(); // Tornar a mostrar botó afegir
             } else {
                 this.saveMemoContent(entryId, textarea.value);
             }
@@ -578,20 +574,10 @@ const Tree = {
         input.dataset.entryId = entryId;
         input.focus();
         
-        // Auto-save + onBlur
-        let typingTimer;
-        input.addEventListener('input', () => {
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-                this.saveUrlContent(entryId, input.value);
-            }, 1500);
-        });
-        
+        // NOMÉS onBlur - sense timers
         input.addEventListener('blur', () => {
-            clearTimeout(typingTimer);
             if (input.value.trim() === '') {
-                // Si està buit, tornar a mostrar botó afegir
-                App.loadTree();
+                App.loadTree(); // Tornar a mostrar botó afegir
             } else {
                 this.saveUrlContent(entryId, input.value);
             }
@@ -602,6 +588,13 @@ const Tree = {
     
     // ==================== SAVE MEMO CONTENT ====================
     async saveMemoContent(entryId, content) {
+        // Comprovar si ha canviat respecte a STATE
+        const entry = STATE.flatEntries.get(entryId);
+        if (entry && content === entry.content) {
+            console.log(`[Tree] Memo ${entryId} sense canvis, skip`);
+            return; // No cal guardar
+        }
+        
         try {
             const textarea = document.querySelector(`textarea[data-entry-id="${entryId}"]`);
             if (textarea) {
@@ -614,11 +607,12 @@ const Tree = {
                 textarea.classList.remove('saving');
             }
             
-            // Actualitzar STATE
-            const entry = STATE.flatEntries.get(entryId);
+            // ✅ CRÍTIC: Actualitzar STATE immediatament
             if (entry) {
                 entry.content = content;
             }
+            
+            console.log(`[Tree] Memo ${entryId} guardat correctament`);
             
         } catch (error) {
             console.error('[Tree] Error desant memo:', error);
@@ -628,14 +622,22 @@ const Tree = {
     
     // ==================== SAVE URL CONTENT ====================
     async saveUrlContent(entryId, url) {
+        // Comprovar si ha canviat respecte a STATE
+        const entry = STATE.flatEntries.get(entryId);
+        if (entry && url === entry.url) {
+            console.log(`[Tree] URL ${entryId} sense canvis, skip`);
+            return; // No cal guardar
+        }
+        
         try {
             await API.updateEntry(entryId, { url: url });
             
-            // Actualitzar STATE
-            const entry = STATE.flatEntries.get(entryId);
+            // ✅ CRÍTIC: Actualitzar STATE immediatament
             if (entry) {
                 entry.url = url;
             }
+            
+            console.log(`[Tree] URL ${entryId} guardada correctament`);
             
         } catch (error) {
             console.error('[Tree] Error desant URL:', error);
@@ -644,9 +646,9 @@ const Tree = {
     },
     
     // ==================== TOGGLE NODE EXPANSION ====================
-    toggleNodeExpansion(entryId) {
+    async toggleNodeExpansion(entryId) {
         StateHelpers.toggleNodeExpanded(entryId);
-        this.render();
+        await this.render();
     },
     
     // ==================== ACTION BUTTON ====================
@@ -703,13 +705,13 @@ const Tree = {
     },
     
     // ==================== EXPAND/COLLAPSE ALL ====================
-    expandAll() {
+    async expandAll() {
         StateHelpers.expandAllNodes();
-        this.render();
+        await this.render();
     },
     
-    collapseAll() {
+    async collapseAll() {
         StateHelpers.collapseAllNodes();
-        this.render();
+        await this.render();
     }
 };

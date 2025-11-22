@@ -725,9 +725,13 @@ select.form-control {
 /* Títol del node */
 .node-title {
     flex: 1;
+    min-width: 0; /* Permet text-overflow ellipsis si cal */
     font-size: var(--font-md);
     font-weight: 500;
     color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .node-title.completed {
@@ -740,6 +744,8 @@ select.form-control {
     display: flex;
     gap: var(--space-xs);
     align-items: center;
+    flex: 1; /* Permet expandir-se i fer espai pel títol */
+    min-width: 0; /* Permet shrink si cal */
 }
 
 .node-tag {
@@ -765,6 +771,8 @@ select.form-control {
     font-size: 14px;
     color: var(--text-secondary);
     transition: all var(--transition-fast);
+    margin-left: auto; /* CLAU: Empeny el botó a la dreta i fa espai pel títol */
+    flex-shrink: 0;
 }
 
 .btn-node-expand:hover {

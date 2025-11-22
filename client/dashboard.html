@@ -3,286 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Manager - Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        select, button {
-            padding: 8px 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        button {
-            background: #007bff;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-        
-        button:hover {
-            background: #0056b3;
-        }
-        
-        .tree-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .entry {
-            padding: 8px 12px;
-            border-left: 3px solid transparent;
-            margin: 4px 0;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .entry:hover {
-            background: #f8f9fa;
-        }
-        
-        /* Indentació per nivell */
-        .entry[data-depth="0"] { padding-left: 12px; }
-        .entry[data-depth="1"] { padding-left: 32px; }
-        .entry[data-depth="2"] { padding-left: 52px; }
-        .entry[data-depth="3"] { padding-left: 72px; }
-        .entry[data-depth="4"] { padding-left: 92px; }
-        .entry[data-depth="5"] { padding-left: 112px; }
-        
-        /* Colors per status_color */
-        .entry[data-status="blanc"] { border-left-color: #e9ecef; }
-        .entry[data-status="groc"] { border-left-color: #ffc107; background: #fff9e6; }
-        .entry[data-status="gris"] { border-left-color: #6c757d; }
-        .entry[data-status="vermell"] { border-left-color: #dc3545; background: #ffe6e6; }
-        .entry[data-status="blau"] { border-left-color: #007bff; }
-        .entry[data-status="taronja"] { border-left-color: #fd7e14; }
-        .entry[data-status="verd"] { border-left-color: #28a745; background: #e6ffe6; }
-        
-        .entry-icon {
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
-        }
-        
-        .entry-path {
-            font-size: 11px;
-            color: #6c757d;
-            font-family: 'Courier New', monospace;
-            min-width: 60px;
-        }
-        
-        .entry-title {
-            flex: 1;
-            font-weight: 500;
-        }
-        
-        .entry-type {
-            font-size: 11px;
-            padding: 2px 8px;
-            background: #e9ecef;
-            border-radius: 3px;
-            color: #495057;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 4px;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #6c757d;
-        }
-    </style>
+    <title>Project Manager v2.1 - Dashboard</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/complex-nodes.css">
+    <link rel="stylesheet" href="css/themes.css">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>📋 Project Manager Dashboard</h1>
-            <div class="controls">
-                <label>Projecte:</label>
-                <select id="projectSelect">
-                    <option value="000">000 - Documentació</option>
-                    <option value="001">001 - PM Project Manager</option>
-                </select>
-                <button onclick="loadProject()">Carregar</button>
-                <button onclick="refreshProject()">Refrescar</button>
+<body data-theme="dark">
+    
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Carregant...</p>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Main Dashboard -->
+    <div class="dashboard">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">📋 Project Manager v2.1</h1>
+                
+                <!-- PROJECT SELECTOR -->
+                <div class="project-selector">
+                    <label for="projectSelect">Projecte:</label>
+                    <select class="form-control" id="projectSelect">
+                        <option value="">Carregant...</option>
+                    </select>
+                    <button class="btn btn-icon" id="btnNewProject" title="Crear nou projecte">
+                        ➕
+                    </button>
+                </div>
+                
+                <div class="version-info" id="versionInfo">
+                    <span class="version-badge">
+                        🤖 Claude: <strong id="vClaude">0</strong>
+                    </span>
+                    <span class="version-badge">
+                        👤 User: <strong id="vUser">0</strong>
+                    </span>
+                    <span class="version-badge">
+                        📌 Actual: <strong id="vActual">0</strong>
+                    </span>
+                    <span class="changes-pending hidden" id="changesPending">0 nous</span>
+                </div>
             </div>
-            <div class="stats" id="stats"></div>
+            <div class="header-right">
+                <button class="btn btn-primary" id="btnStartSession" title="Iniciar sessió User">
+                    ▶️ Iniciar Sessió
+                </button>
+                <button class="btn btn-secondary" id="btnViewPending" title="Veure canvis pendents">
+                    👁️ Canvis (<span id="pendingCount">0</span>)
+                </button>
+                <button class="btn btn-icon" id="btnTheme" title="Canviar tema">
+                    🌓
+                </button>
+                <button class="btn btn-icon" id="btnRefresh" title="Refrescar">
+                    🔄
+                </button>
+            </div>
         </header>
         
-        <div class="tree-container" id="treeContainer">
-            <div class="loading">Selecciona un projecte per començar</div>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Accions ràpides -->
+            <section class="sidebar-section">
+                <h3>Accions Ràpides</h3>
+                <button class="btn btn-secondary btn-block btn-small" id="btnExpandAll">
+                    📂 Expandir Tot
+                </button>
+                <button class="btn btn-secondary btn-block btn-small" id="btnCollapseAll">
+                    📁 Contraure Tot
+                </button>
+            </section>
+            
+            <!-- Cerca -->
+            <section class="sidebar-section">
+                <h3>Cerca</h3>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar...">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </section>
+            
+            <!-- Filtres -->
+            <section class="sidebar-section">
+                <h3>Filtres</h3>
+                
+                <label>Estat:</label>
+                <select class="form-control" id="filterStatus">
+                    <option value="">Tots</option>
+                    <option value="blanc">⚪ Nou/sense processar</option>
+                    <option value="groc">🟡 Treballant activament</option>
+                    <option value="gris">🔘 Processat però inactiu</option>
+                    <option value="vermell">🔴 Erroni/bloquejat</option>
+                    <option value="blau">🔵 Usuari ha validat proposta</option>
+                    <option value="taronja">🟠 Claude ha incorporat actualització</option>
+                    <option value="verd">🟢 Completat/consensuat</option>
+                </select>
+                
+                <label>Tipus:</label>
+                <select class="form-control" id="filterType">
+                    <option value="">Tots</option>
+                    <option value="group">📁 Grup</option>
+                    <option value="memo">📝 Memo</option>
+                    <option value="check">☑️ Check</option>
+                    <option value="link">🔗 Link</option>
+                    <option value="question">❓ Pregunta</option>
+                </select>
+                
+                <label>
+                    <input type="checkbox" id="filterNewOnly">
+                    Només nous (no revisats)
+                </label>
+            </section>
+            
+            <!-- Estadístiques -->
+            <section class="sidebar-section">
+                <h3>Estadístiques</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total:</span>
+                        <span class="stat-value" id="statTotal">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">En treball:</span>
+                        <span class="stat-value" id="statWorking">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Completats:</span>
+                        <span class="stat-value" id="statCompleted">0</span>
+                    </div>
+                </div>
+            </section>
+            
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="toolbar-group">
+                    <button class="btn btn-secondary btn-small" id="btnSave" disabled>
+                        💾 Desar
+                    </button>
+                </div>
+                <div class="toolbar-spacer"></div>
+                <div class="toolbar-info">
+                    <span id="lastUpdate">Carregant...</span>
+                </div>
+            </div>
+            
+            <!-- Breadcrumbs Navigation -->
+            <div class="breadcrumbs-bar">
+                <button class="btn btn-icon btn-small hidden" id="btnNavigateUp" title="Pujar nivell">
+                    ⬆️
+                </button>
+                <div class="breadcrumbs" id="breadcrumbsContainer">
+                    <!-- Breadcrumbs es generarà dinàmicament -->
+                </div>
+                <button class="btn btn-primary btn-small" id="btnAddEntry" title="Afegir entrada">
+                    ➕ Afegir Entrada
+                </button>
+            </div>
+            
+            <!-- Tree Container -->
+            <div id="treeContainer" class="tree-container">
+                <!-- L'arbre es renderitzarà aquí -->
+            </div>
+            
+        </main>
+        
+    </div>
+    
+    <!-- Modal: Add/Edit Entry -->
+    <div class="modal" id="modalEntry">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalEntryTitle">Nova Entrada</h2>
+                <button class="modal-close" type="button" id="btnCloseEntry">×</button>
+            </div>
+            <form id="formEntry">
+                <input type="hidden" id="entryId">
+                <input type="hidden" id="entryParentId">
+                
+                <div class="form-group">
+                    <label for="entryType">Tipus d'entrada *</label>
+                    <select class="form-control" id="entryType" required>
+                        <option value="group">📁 Grup</option>
+                        <option value="memo">📝 Memo</option>
+                        <option value="check">☑️ Check</option>
+                        <option value="link">🔗 Link</option>
+                        <option value="question">❓ Pregunta</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="entryTitle">Títol *</label>
+                    <input type="text" class="form-control" id="entryTitle" required>
+                </div>
+                
+                <div class="form-group" id="groupContent">
+                    <label for="entryContent">Contingut</label>
+                    <textarea class="form-control" id="entryContent" rows="5"></textarea>
+                </div>
+                
+                <div class="form-group hidden" id="groupUrl">
+                    <label for="entryUrl">URL</label>
+                    <input type="url" class="form-control" id="entryUrl">
+                </div>
+                
+                <div class="form-group">
+                    <label>Estat (color)</label>
+                    <div class="color-selector" id="colorSelector">
+                        <!-- Colors es generaran dinàmicament -->
+                    </div>
+                    <input type="hidden" id="entryColor" value="blanc">
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnCancelEntry">
+                        Cancel·lar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveEntry">
+                        💾 Desar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <script>
-        // Configuració API
-        const API_BASE = 'https://www.contratemps.org/claudetools';
-        
-        // Icones per tipus
-        const TYPE_ICONS = {
-            'group': '📁',
-            'memo': '📝',
-            'check': '☑️',
-            'link': '🔗'
-        };
-        
-        // Carregar projecte
-        async function loadProject() {
-            const projectId = document.getElementById('projectSelect').value;
-            const container = document.getElementById('treeContainer');
-            
-            container.innerHTML = '<div class="loading">Carregant...</div>';
-            
-            try {
-                const response = await fetch(`${API_BASE}/api_get_tree.php?project_id=${projectId}`);
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                
-                renderTree(data.entries);
-                updateStats(data);
-                
-            } catch (error) {
-                container.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-            }
-        }
-        
-        // Renderitzar arbre
-        function renderTree(entries) {
-            const container = document.getElementById('treeContainer');
-            container.innerHTML = '';
-            
-            entries.forEach(entry => {
-                const div = document.createElement('div');
-                div.className = 'entry';
-                div.setAttribute('data-depth', entry.depth);
-                div.setAttribute('data-status', entry.status_color);
-                div.setAttribute('data-type', entry.entry_type);
-                div.setAttribute('data-id', entry.id);
-                
-                // Icon
-                const icon = document.createElement('span');
-                icon.className = 'entry-icon';
-                icon.textContent = TYPE_ICONS[entry.entry_type] || '•';
-                
-                // Path
-                const path = document.createElement('span');
-                path.className = 'entry-path';
-                path.textContent = entry.full_path;
-                
-                // Title
-                const title = document.createElement('span');
-                title.className = 'entry-title';
-                title.textContent = entry.title;
-                
-                // Type badge
-                const type = document.createElement('span');
-                type.className = 'entry-type';
-                type.textContent = entry.entry_type.toUpperCase();
-                
-                div.appendChild(icon);
-                div.appendChild(path);
-                div.appendChild(title);
-                div.appendChild(type);
-                
-                // Event listener (futur)
-                div.addEventListener('click', () => onEntryClick(entry));
-                
-                container.appendChild(div);
-            });
-        }
-        
-        // Actualitzar estadístiques
-        function updateStats(data) {
-            const stats = document.getElementById('stats');
-            const types = {};
-            
-            data.entries.forEach(entry => {
-                types[entry.entry_type] = (types[entry.entry_type] || 0) + 1;
-            });
-            
-            const parts = [
-                `Total: ${data.total_entries}`,
-                ...Object.entries(types).map(([type, count]) => `${type}: ${count}`)
-            ];
-            
-            stats.innerHTML = parts.join(' | ');
-        }
-        
-        // Click en entrada (futur)
-        function onEntryClick(entry) {
-            console.log('Click:', entry);
-            // TODO: Implementar edició/visualització
-        }
-        
-        // Refrescar
-        function refreshProject() {
-            loadProject();
-        }
-        
-        // Carregar projecte per defecte
-        window.addEventListener('DOMContentLoaded', () => {
-            // Opcional: carregar automàticament el primer projecte
-            // loadProject();
-        });
-    </script>
+    
+    <!-- Modal: View Pending Changes -->
+    <div class="modal" id="modalPending">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Canvis Pendents de Revisar</h2>
+                <button class="modal-close" type="button" id="btnClosePending">×</button>
+            </div>
+            <div id="pendingList" class="pending-list">
+                <!-- Llista de canvis es generarà aquí -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCancelPending">
+                    Tancar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnMarkReviewed">
+                    ✅ Marcar Tot com Revisat
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts - ORDRE IMPORTANT! -->
+    <script src="js/config.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/complex-templates.js"></script>
+    <script src="js/tree.js"></script>
+    <script src="js/app.js"></script>
+    
 </body>
 </html>

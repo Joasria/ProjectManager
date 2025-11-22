@@ -16,6 +16,9 @@ const App = {
             // Setup event listeners
             this.setupEventListeners();
             
+            // Setup beforeunload - guardar abans de tancar
+            this.setupBeforeUnload();
+            
             // Carregar dades inicials del projecte actual
             await this.loadInitialData();
             
@@ -31,6 +34,18 @@ const App = {
             console.error('[APP] Error inicialitzant:', error);
             UI.showToast('Error carregant dashboard: ' + error.message, 'error');
         }
+    },
+    
+    // ==================== SETUP BEFOREUNLOAD ====================
+    setupBeforeUnload() {
+        window.addEventListener('beforeunload', (e) => {
+            // Guardar camp amb focus abans de tancar
+            Tree.saveCurrentlyFocusedField();
+            
+            // No mostrar confirmació (opcional)
+            // e.preventDefault();
+            // e.returnValue = '';
+        });
     },
     
     // ==================== LOAD PROJECTS ====================
@@ -142,8 +157,9 @@ const App = {
                     STATE.treeData = response.data;
                 }
                 
-                // Construir mapa pla per accés ràpid
+                // ✅ CRÍTIC: Construir mapa pla amb TOT l'arbre (response.data), NO només el treeData filtrat
                 STATE.flatEntries = StateHelpers.buildFlatMap(response.data);
+                console.log(`[APP] FlatMap construït amb ${STATE.flatEntries.size} entrades del total`);
                 
                 Tree.render();
                 UI.updateStats();

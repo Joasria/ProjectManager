@@ -124,10 +124,10 @@ registerTemplate('selector', {
             label.htmlFor = `option-${child.id}`;
             label.innerHTML = child.title; // Renderitzar HTML
             
-            // Event per actualitzar
-            radio.addEventListener('change', (e) => {
+            // Event per actualitzar - GUARDAT IMMEDIAT
+            radio.addEventListener('change', async (e) => {
                 if (e.target.checked) {
-                    this.handleSelectorChange(parentNode.id, child.id);
+                    await this.handleSelectorChange(parentNode.id, child.id);
                 }
             });
             
@@ -155,23 +155,28 @@ registerTemplate('selector', {
         console.log(`Selector ${parentId}: Opció ${selectedChildId} seleccionada`);
         
         try {
-            // ✅ CORRECCIÓ: Obtenir tots els fills des de la BD amb getSiblings
+            // Obtenir tots els fills des de la BD
             const response = await API.getSiblings(parentId);
             const allChildren = response.siblings || [];
             
             console.log(`[Selector] Fills obtinguts de BD:`, allChildren);
             
-            // ✅ CORRECCIÓ: Actualitzar cada fill amb updateEntry (valor concret)
+            // Actualitzar cada fill
             for (const child of allChildren) {
                 const shouldBeChecked = (child.id == selectedChildId);
                 const currentlyChecked = (child.checked === 1 || child.checked === '1' || child.checked === true);
                 
-                // Només actualitzar si cal canviar l'estat
                 if (currentlyChecked !== shouldBeChecked) {
                     console.log(`[Selector] Actualitzant ${child.id}: ${currentlyChecked} → ${shouldBeChecked}`);
                     await API.updateEntry(child.id, { 
                         checked: shouldBeChecked ? 1 : 0 
                     });
+                    
+                    // ✅ CRÍTIC: Actualitzar STATE immediatament
+                    const entry = STATE.flatEntries.get(child.id);
+                    if (entry) {
+                        entry.checked = shouldBeChecked ? 1 : 0;
+                    }
                 }
             }
             
@@ -224,9 +229,9 @@ registerTemplate('check', {
             label.htmlFor = `option-${child.id}`;
             label.innerHTML = child.title; // Renderitzar HTML
             
-            // Event per actualitzar
-            checkbox.addEventListener('change', (e) => {
-                this.handleCheckChange(parentNode.id, child.id, e.target.checked);
+            // Event per actualitzar - GUARDAT IMMEDIAT
+            checkbox.addEventListener('change', async (e) => {
+                await this.handleCheckChange(parentNode.id, child.id, e.target.checked);
             });
             
             optionWrapper.appendChild(checkbox);
@@ -248,11 +253,15 @@ registerTemplate('check', {
     },
     
     handleCheckChange: async function(parentId, childId, isChecked) {
-        console.log(`Check ${parentId}: Opció ${childId} ${isChecked ? 'marcada' : 'desmarcada'}`);
-        
         try {
-            // Actualitzar BD: toggle checked del child
-            await API.toggleCompleted(childId);
+            // Actualitzar BD amb valor concret (NO toggle)
+            await API.updateEntry(childId, { checked: isChecked ? 1 : 0 });
+            
+            // ✅ CRÍTIC: Actualitzar STATE immediatament
+            const entry = STATE.flatEntries.get(parseInt(childId));
+            if (entry) {
+                entry.checked = isChecked ? 1 : 0;
+            }
             
             // Actualitzar resum visual
             const checkForm = document.querySelector(`[data-form-id="${parentId}"]`);
@@ -347,11 +356,17 @@ registerTemplate('form', {
             label.classList.add('required');
         }
         
-        // ✅ MILLORA: Auto-save amb debounce + blur
-        let saveTimer;
-        const saveContent = async () => {
+        // NOMÉS onBlur - sense timers, actualitzant STATE
+        input.addEventListener('blur', async () => {
             try {
                 await API.updateEntry(child.id, { content: input.value });
+                
+                // ✅ CRÍTIC: Actualitzar STATE immediatament
+                const entry = STATE.flatEntries.get(parseInt(child.id));
+                if (entry) {
+                    entry.content = input.value;
+                }
+                
                 console.log(`✅ Field ${child.id} desat: ${input.value}`);
             } catch (error) {
                 console.error(`❌ Error desant field ${child.id}:`, error);
@@ -359,16 +374,6 @@ registerTemplate('form', {
                     UI.showToast('Error desant camp: ' + error.message, 'error');
                 }
             }
-        };
-        
-        input.addEventListener('input', (e) => {
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(saveContent, 1500); // Auto-save després de 1.5s sense escriure
-        });
-        
-        input.addEventListener('blur', () => {
-            clearTimeout(saveTimer);
-            saveContent(); // Desar immediatament al perdre el focus
         });
         
         wrapper.appendChild(label);
@@ -410,11 +415,18 @@ registerTemplate('form', {
             select.appendChild(option);
         });
         
-        // ✅ MILLORA: Desar selecció a context_data
+        // onChange immediat, actualitzant STATE
         select.addEventListener('change', async (e) => {
             try {
                 const newContextData = { ...contextData, selected: e.target.value };
                 await API.updateEntry(child.id, { context_data: newContextData });
+                
+                // ✅ CRÍTIC: Actualitzar STATE immediatament
+                const entry = STATE.flatEntries.get(child.id);
+                if (entry) {
+                    entry.context_data = newContextData;
+                }
+                
                 console.log(`✅ Select ${child.id} desat: ${e.target.value}`);
             } catch (error) {
                 console.error(`❌ Error desant select ${child.id}:`, error);
