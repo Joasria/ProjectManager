@@ -41,7 +41,7 @@ function createComplexHeader(entry, template) {
     
     const title = document.createElement('span');
     title.className = 'node-title';
-    title.textContent = entry.title;
+    title.innerHTML = entry.title; // Renderitzar HTML
     
     const badge = document.createElement('span');
     badge.className = 'template-badge';
@@ -122,7 +122,7 @@ registerTemplate('selector', {
             
             const label = document.createElement('label');
             label.htmlFor = `option-${child.id}`;
-            label.textContent = child.title;
+            label.innerHTML = child.title; // Renderitzar HTML
             
             // Event per actualitzar
             radio.addEventListener('change', (e) => {
@@ -222,7 +222,7 @@ registerTemplate('check', {
             
             const label = document.createElement('label');
             label.htmlFor = `option-${child.id}`;
-            label.textContent = child.title;
+            label.innerHTML = child.title; // Renderitzar HTML
             
             // Event per actualitzar
             checkbox.addEventListener('change', (e) => {
@@ -323,7 +323,7 @@ registerTemplate('form', {
         wrapper.dataset.fieldId = child.id;
         
         const label = document.createElement('label');
-        label.textContent = child.title;
+        label.innerHTML = child.title; // Renderitzar HTML
         label.htmlFor = `field-${child.id}`;
         
         const contextData = parseContextData(child.context_data);
@@ -382,7 +382,7 @@ registerTemplate('form', {
         wrapper.className = 'form-field';
         
         const label = document.createElement('label');
-        label.textContent = child.title;
+        label.innerHTML = child.title; // Renderitzar HTML
         label.htmlFor = `select-${child.id}`;
         
         const select = document.createElement('select');
@@ -435,7 +435,7 @@ registerTemplate('form', {
         
         const button = document.createElement('button');
         button.className = `form-action ${contextData.style || 'primary'}`;
-        button.textContent = child.title;
+        button.innerHTML = child.title; // Renderitzar HTML
         button.type = contextData.action_type === 'submit' ? 'submit' : 'button';
         
         button.addEventListener('click', (e) => {
