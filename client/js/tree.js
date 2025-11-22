@@ -124,7 +124,7 @@ const Tree = {
         // Title
         const title = document.createElement('span');
         title.className = 'node-title';
-        title.textContent = entry.title;
+        title.innerHTML = entry.title; // Renderitzar HTML
         header.appendChild(title);
         
         // Badge amb nom de template
@@ -216,7 +216,7 @@ const Tree = {
         // Title
         const title = document.createElement('span');
         title.className = 'tree-title';
-        title.textContent = entry.title;
+        title.innerHTML = entry.title; // Renderitzar HTML
         node.appendChild(title);
         
         // Version badge (si és nou)
@@ -302,7 +302,7 @@ const Tree = {
         if (entry.checked) {
             title.classList.add('completed');
         }
-        title.textContent = entry.title;
+        title.innerHTML = entry.title; // Renderitzar HTML
         header.appendChild(title);
         
         // 4. Tags (futur - ara buit)
