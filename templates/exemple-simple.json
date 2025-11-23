@@ -1,0 +1,64 @@
+{
+  "template_name": "Projecte Web Complet",
+  "template_version": "1.0",
+  "description": "Estructura completa per desenvolupar un projecte web des de zero fins a producció",
+  "author": "Joaquim Serra",
+  "created_at": "2025-01-22",
+  "tags": ["web", "development", "full-stack", "agile"],
+  
+  "structure": [
+    {
+      "title": "📋 PLANIFICACIÓ",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Requisits del client",
+          "type": "memo",
+          "status": "blanc",
+          "content": "Documentar tots els requisits funcionals i no funcionals del projecte.
+
+Punts clau:
+- Objectius principals
+- Públic objectiu  
+- Funcionalitats essencials
+- Restriccions tècniques
+- Pressupost i deadlines"
+        },
+        {
+          "title": "Checklist inicial",
+          "type": "complex:check",
+          "status": "blanc",
+          "children": [
+            {"title": "Reunió kickoff completada", "type": "option"},
+            {"title": "Brief del client signat", "type": "option"},
+            {"title": "Pressupost aprovat", "type": "option"},
+            {"title": "Equip assignat", "type": "option"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "🎨 DISSENY",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Wireframes",
+          "type": "memo",
+          "status": "blanc"
+        },
+        {
+          "title": "Validació disseny",
+          "type": "complex:selector",
+          "status": "blanc",
+          "children": [
+            {"title": "✅ Aprovat", "type": "option"},
+            {"title": "⏳ Pendent feedback", "type": "option"},
+            {"title": "🔄 Necessita canvis", "type": "option"}
+          ]
+        }
+      ]
+    }
+  ]
+}

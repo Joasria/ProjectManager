@@ -1,0 +1,400 @@
+{
+  "template_name": "Desenvolupament de Programa",
+  "template_version": "1.0",
+  "description": "Plantilla per gestionar el desenvolupament complet d'un programa amb integració GitHub i documentació estructurada",
+  "author": "Joaquim Serra",
+  "created_at": "2025-01-22",
+  "tags": ["development", "programming", "github", "documentation"],
+  
+  "structure": [
+    {
+      "title": "📍 UBICACIONS I REPOSITORI",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Informació del Repositori",
+          "type": "complex:form",
+          "status": "blanc",
+          "children": [
+            {"title": "📦 Configuració", "type": "separator"},
+            {"title": "Nom del programa", "type": "field", "context_data": {"field_type": "text", "placeholder": "nom-programa", "required": true}},
+            {"title": "URL GitHub", "type": "field", "context_data": {"field_type": "url", "placeholder": "https://github.com/user/repo"}},
+            {"title": "Branch principal", "type": "field", "context_data": {"field_type": "text", "placeholder": "main"}},
+            {"title": "", "type": "separator"},
+            {"title": "📂 Paths Locals", "type": "separator"},
+            {"title": "Directori local", "type": "field", "context_data": {"field_type": "text", "placeholder": "C:\\Users\\...\\projecte"}},
+            {"title": "Directori documentació", "type": "field", "context_data": {"field_type": "text", "placeholder": "C:\\Users\\...\\projecte\\docs"}},
+            {"title": "Directori tests", "type": "field", "context_data": {"field_type": "text", "placeholder": "C:\\Users\\...\\projecte\\tests"}}
+          ]
+        },
+        {
+          "title": "Links de Referència",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Links Importants\n\n## Repositori\n- GitHub: [URL_GITHUB]\n- Issues: [URL_GITHUB]/issues\n- Pull Requests: [URL_GITHUB]/pulls\n- Wiki: [URL_GITHUB]/wiki\n\n## Documentació\n- README: [URL_GITHUB]/blob/main/README.md\n- CHANGELOG: [URL_GITHUB]/blob/main/CHANGELOG.md\n- API Docs: [URL_DOCS]\n\n## Gestió\n- Project Board: [URL_GITHUB]/projects\n- Milestones: [URL_GITHUB]/milestones"
+        },
+        {
+          "title": "Estat del repositori",
+          "type": "complex:check",
+          "status": "blanc",
+          "children": [
+            {"title": "Repositori creat i clonat", "type": "option"},
+            {"title": ".gitignore configurat", "type": "option"},
+            {"title": "README.md inicial creat", "type": "option"},
+            {"title": "Estructura de carpetes definida", "type": "option"},
+            {"title": "git-config.json configurat", "type": "option"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "📖 DESCRIPCIÓ I DOCUMENTACIÓ",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Descripció General del Programa",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Descripció del Programa\n\n## Què fa?\nDescripció breu del propòsit principal del programa.\n\n## Per a qui?\nUsuaris objectiu i casos d'ús principals.\n\n## Per què?\nProblema que resol o necessitat que cobreix.\n\n## Com?\nEnfocament tècnic general (sense entrar en detalls d'implementació)."
+        },
+        {
+          "title": "Objectius del Projecte",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Objectius\n\n## Objectius Principals\n1. [Objectiu 1]\n2. [Objectiu 2]\n3. [Objectiu 3]\n\n## Objectius Secundaris\n- [Objectiu secundari 1]\n- [Objectiu secundari 2]\n\n## Fora de l'abast\n- [Què NO fa el programa]\n- [Limitacions conegudes]"
+        },
+        {
+          "title": "Requisits Funcionals",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Requisits Funcionals\n\n## RF-01: [Nom del requisit]\n**Prioritat:** Alta | Mitja | Baixa\n**Descripció:** Descripció detallada\n**Criteris d'acceptació:**\n- [ ] Criteri 1\n- [ ] Criteri 2\n\n## RF-02: [Nom del requisit]\n**Prioritat:** Alta | Mitja | Baixa\n**Descripció:** Descripció detallada"
+        },
+        {
+          "title": "Requisits No Funcionals",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Requisits No Funcionals\n\n## Performance\n- Temps de resposta màxim: [X ms]\n- Capacitat concurrent: [X usuaris]\n\n## Seguretat\n- Autenticació requerida\n- Encriptació de dades sensibles\n\n## Compatibilitat\n- SO suportats: [Windows, Linux, macOS]\n- Versions mínimes: [especificar]\n\n## Mantenibilitat\n- Cobertura de tests: mínim 80%\n- Documentació del codi obligatòria"
+        },
+        {
+          "title": "Stack Tecnològic",
+          "type": "complex:form",
+          "status": "blanc",
+          "children": [
+            {"title": "🛠️ Tecnologies", "type": "separator"},
+            {"title": "Llenguatge principal", "type": "field", "context_data": {"field_type": "text", "placeholder": "Python, JavaScript, Java..."}},
+            {"title": "Framework", "type": "field", "context_data": {"field_type": "text", "placeholder": "React, Django, Spring..."}},
+            {"title": "Base de dades", "type": "field", "context_data": {"field_type": "text", "placeholder": "PostgreSQL, MongoDB..."}},
+            {"title": "Testing", "type": "field", "context_data": {"field_type": "text", "placeholder": "Jest, Pytest, JUnit..."}},
+            {"title": "CI/CD", "type": "field", "context_data": {"field_type": "text", "placeholder": "GitHub Actions, Jenkins..."}}
+          ]
+        },
+        {
+          "title": "Diagrama d'Arquitectura",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/blob/main/docs/architecture.md",
+          "content": "Enllaç al diagrama d'arquitectura del sistema"
+        },
+        {
+          "title": "Documentació tècnica completada",
+          "type": "complex:check",
+          "status": "blanc",
+          "children": [
+            {"title": "README.md actualitzat", "type": "option"},
+            {"title": "Arquitectura documentada", "type": "option"},
+            {"title": "API documentada", "type": "option"},
+            {"title": "Guia d'instal·lació creada", "type": "option"},
+            {"title": "Guia de contribució creada", "type": "option"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "🎯 MÒDUL 1: [NOM DEL MÒDUL]",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Descripció del Mòdul",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Mòdul: [NOM]\n\n## Responsabilitat\nQuè fa aquest mòdul i per què existeix.\n\n## Dependències\n- Mòdul A\n- Mòdul B\n- Llibreria externa X\n\n## Interfícies públiques\n- `funció1(params)` - Descripció\n- `funció2(params)` - Descripció\n\n## Fitxers relacionats\n- `src/modul/main.py`\n- `src/modul/utils.py`\n- `tests/test_modul.py`"
+        },
+        {
+          "title": "Objectius del Mòdul",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Objectius del Mòdul\n\n## Objectiu 1: [Nom]\n**Prioritat:** Alta\n**Descripció:** Què volem aconseguir\n**Criteris d'èxit:**\n- [ ] Criteri mesurable 1\n- [ ] Criteri mesurable 2\n\n## Objectiu 2: [Nom]\n**Prioritat:** Mitja\n**Descripció:** Què volem aconseguir"
+        },
+        {
+          "title": "Tasks de Desenvolupament",
+          "type": "group",
+          "status": "blanc",
+          "children": [
+            {
+              "title": "Task 1.1: Setup inicial",
+              "type": "check",
+              "status": "blanc",
+              "content": "Crear estructura de carpetes i fitxers base del mòdul"
+            },
+            {
+              "title": "Task 1.2: Implementar funcionalitat core",
+              "type": "check",
+              "status": "blanc",
+              "content": "Desenvolupar la funcionalitat principal del mòdul"
+            },
+            {
+              "title": "Task 1.3: Tests unitaris",
+              "type": "check",
+              "status": "blanc",
+              "content": "Crear tests per totes les funcions públiques"
+            },
+            {
+              "title": "Task 1.4: Documentació",
+              "type": "check",
+              "status": "blanc",
+              "content": "Documentar API i exemples d'ús"
+            }
+          ]
+        },
+        {
+          "title": "Issues de GitHub",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Issues Relacionades\n\n- #001: [Títol issue] - [URL_ISSUE]\n- #002: [Títol issue] - [URL_ISSUE]\n\n## Per crear issue nou:\n1. Anar a [URL_GITHUB]/issues/new\n2. Usar template \"Feature Request\" o \"Bug Report\"\n3. Assignar labels: `module:nom-modul`, `priority:high`"
+        },
+        {
+          "title": "Branch de treball",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/tree/feature/modul-1",
+          "content": "Branch: feature/modul-1"
+        },
+        {
+          "title": "Pull Request",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/pull/1",
+          "content": "PR #1: Implementació Mòdul 1"
+        }
+      ]
+    },
+    {
+      "title": "🎯 MÒDUL 2: [NOM DEL MÒDUL]",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Descripció del Mòdul",
+          "type": "memo",
+          "status": "blanc",
+          "content": "[Igual que Mòdul 1]"
+        },
+        {
+          "title": "Objectius del Mòdul",
+          "type": "memo",
+          "status": "blanc",
+          "content": "[Igual que Mòdul 1]"
+        },
+        {
+          "title": "Tasks de Desenvolupament",
+          "type": "group",
+          "status": "blanc",
+          "children": [
+            {"title": "Task 2.1: [Nom task]", "type": "check", "status": "blanc"},
+            {"title": "Task 2.2: [Nom task]", "type": "check", "status": "blanc"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "🧪 TESTING I QUALITAT",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Estratègia de Testing",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Estratègia de Testing\n\n## Tests Unitaris\n- Framework: [pytest, jest, junit]\n- Cobertura mínima: 80%\n- Ubicació: `/tests/unit/`\n\n## Tests d'Integració\n- Provar interacció entre mòduls\n- Ubicació: `/tests/integration/`\n\n## Tests E2E\n- Flows complets d'usuari\n- Framework: [Cypress, Selenium]\n- Ubicació: `/tests/e2e/`"
+        },
+        {
+          "title": "Checklist de Qualitat",
+          "type": "complex:check",
+          "status": "blanc",
+          "children": [
+            {"title": "Tests unitaris > 80% cobertura", "type": "option"},
+            {"title": "Tests integració completats", "type": "option"},
+            {"title": "Linter passat (ESLint, Pylint)", "type": "option"},
+            {"title": "Code review completat", "type": "option"},
+            {"title": "Documentació actualitzada", "type": "option"},
+            {"title": "CI/CD pipeline passa", "type": "option"}
+          ]
+        },
+        {
+          "title": "GitHub Actions Config",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/blob/main/.github/workflows/test.yml",
+          "content": "Configuració CI/CD per testing automàtic"
+        }
+      ]
+    },
+    {
+      "title": "📦 BUILD I RELEASE",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Procés de Build",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Procés de Build\n\n## Development\n```bash\nnpm run dev\n# o\npython -m build --dev\n```\n\n## Production\n```bash\nnpm run build\n# o\npython -m build\n```\n\n## Ubicació dels artifacts\n- Development: `./dist/dev/`\n- Production: `./dist/prod/`"
+        },
+        {
+          "title": "Versionat (Semantic Versioning)",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Versionat\n\nSeguim [Semantic Versioning](https://semver.org/): MAJOR.MINOR.PATCH\n\n## v0.1.0 - MVP\n- Funcionalitats bàsiques\n- Testing inicial\n\n## v0.2.0 - Features adicionals\n- Mòdul 1 complet\n- Mòdul 2 complet\n\n## v1.0.0 - Release Production\n- Tots els mòduls completats\n- Testing complet\n- Documentació completa"
+        },
+        {
+          "title": "Pre-release Checklist",
+          "type": "complex:check",
+          "status": "blanc",
+          "children": [
+            {"title": "Tots els tests passen", "type": "option"},
+            {"title": "CHANGELOG actualitzat", "type": "option"},
+            {"title": "Version bump a package.json/setup.py", "type": "option"},
+            {"title": "README actualitzat", "type": "option"},
+            {"title": "Tag de git creat", "type": "option"},
+            {"title": "Release notes escrites", "type": "option"}
+          ]
+        },
+        {
+          "title": "GitHub Releases",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/releases",
+          "content": "Pàgina de releases al repositori"
+        },
+        {
+          "title": "Distribució",
+          "type": "complex:selector",
+          "status": "blanc",
+          "children": [
+            {"title": "📦 NPM Package", "type": "option"},
+            {"title": "🐍 PyPI Package", "type": "option"},
+            {"title": "📥 GitHub Release", "type": "option"},
+            {"title": "🐳 Docker Image", "type": "option"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "📚 DOCUMENTACIÓ FINAL",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "README.md",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/blob/main/README.md",
+          "content": "Documentació principal del projecte"
+        },
+        {
+          "title": "CHANGELOG.md",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/blob/main/CHANGELOG.md",
+          "content": "Historial de canvis per versió"
+        },
+        {
+          "title": "CONTRIBUTING.md",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/blob/main/CONTRIBUTING.md",
+          "content": "Guia per contribuïdors"
+        },
+        {
+          "title": "API Documentation",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/blob/main/docs/API.md",
+          "content": "Documentació completa de l'API"
+        },
+        {
+          "title": "Documentació completada",
+          "type": "complex:check",
+          "status": "blanc",
+          "children": [
+            {"title": "README amb exemples d'ús", "type": "option"},
+            {"title": "CHANGELOG actualitzat", "type": "option"},
+            {"title": "API docs generada", "type": "option"},
+            {"title": "Guia d'instal·lació", "type": "option"},
+            {"title": "Troubleshooting guide", "type": "option"},
+            {"title": "FAQ creada", "type": "option"}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "🔧 MANTENIMENT",
+      "type": "group",
+      "status": "blanc",
+      "children": [
+        {
+          "title": "Roadmap",
+          "type": "memo",
+          "status": "blanc",
+          "content": "# Roadmap\n\n## v1.1.0 (Q1 2025)\n- [ ] Feature X\n- [ ] Millora Y\n- [ ] Bug fix Z\n\n## v1.2.0 (Q2 2025)\n- [ ] Nova funcionalitat A\n- [ ] Refactoring B\n\n## v2.0.0 (Q3 2025)\n- [ ] Breaking changes\n- [ ] Arquitectura nova"
+        },
+        {
+          "title": "GitHub Project Board",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/projects/1",
+          "content": "Kanban board per gestió de tasques"
+        },
+        {
+          "title": "Issues obertes",
+          "type": "link",
+          "status": "blanc",
+          "url": "https://github.com/user/repo/issues",
+          "content": "Llista d'issues actuals"
+        },
+        {
+          "title": "Tasques de manteniment mensual",
+          "type": "complex:check",
+          "status": "blanc",
+          "children": [
+            {"title": "Actualitzar dependències", "type": "option"},
+            {"title": "Revisar issues obertes", "type": "option"},
+            {"title": "Revisar PRs pendents", "type": "option"},
+            {"title": "Comprovar seguretat (Dependabot)", "type": "option"},
+            {"title": "Actualitzar documentació", "type": "option"}
+          ]
+        }
+      ]
+    }
+  ],
+  
+  "metadata": {
+    "total_modules": 2,
+    "total_groups": 8,
+    "github_integration": true,
+    "documentation_level": "completa",
+    "difficulty": "intermedi"
+  },
+  
+  "usage_instructions": "Aquesta plantilla està dissenyada per gestionar el desenvolupament complet d'un programa amb integració a GitHub. Cada mòdul inclou descripció, objectius, tasks i enllaços a GitHub (issues, PRs, branches). Substitueix [NOM], [URL_GITHUB], etc. amb els valors reals del teu projecte.",
+  
+  "github_workflow": {
+    "branches": "feature/* per desenvolupament, main per producció",
+    "issues": "Crear issue per cada feature/bug amb labels apropiats",
+    "pull_requests": "PR per cada mòdul completat amb review obligatori",
+    "releases": "Tag + Release notes per cada versió"
+  }
+}
