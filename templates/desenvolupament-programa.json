@@ -1,12 +1,428 @@
 {
   "template_name": "Desenvolupament de Programa",
-  "template_version": "1.0",
-  "description": "Plantilla per gestionar el desenvolupament complet d'un programa amb integració GitHub i documentació estructurada",
+  "template_version": "1.1",
+  "description": "Plantilla per gestionar el desenvolupament complet d'un programa amb integració GitHub, documentació estructurada i workflow col·laboratiu IA-Human",
   "author": "Joaquim Serra",
   "created_at": "2025-01-22",
-  "tags": ["development", "programming", "github", "documentation"],
+  "updated_at": "2025-01-22",
+  "tags": ["development", "programming", "github", "documentation", "ai-workflow"],
+  
+  "ai_instructions": {
+    "title": "🤖 INSTRUCCIONS PER A L'ASSISTENT IA",
+    "priority": "CRÍTIC - Llegir abans de començar qualsevol tasca",
+    "principles": [
+      "El Project Manager (PM) és la ÚNICA font de veritat per aquest projecte",
+      "TOTA la informació, decisions, llistes i tasques s'han de registrar al PM",
+      "NO crear llistes o documentació fora del PM",
+      "Utilitzar el sistema de control de versions per sincronitzar canvis",
+      "Esperar feedback de l'usuari a través de l'app abans de continuar"
+    ],
+    "workflow": {
+      "1_iniciar_sessio": {
+        "descripcio": "Abans de començar a treballar",
+        "accions": [
+          "Cridar project_manager amb action=start_session i actor=claude",
+          "Obtenir v_actual per saber la versió de treball",
+          "Revisar canvis pendents de l'usuari amb get_pending"
+        ]
+      },
+      "2_consultar_estructura": {
+        "descripcio": "Entendre l'estat actual del projecte",
+        "accions": [
+          "Cridar api_get_tree per obtenir l'arbre complet",
+          "Revisar l'estat de les tasques (checks)",
+          "Identificar quines tasques estan en progrés (groc) o pendents (blanc)"
+        ]
+      },
+      "3_treballar_amb_pm": {
+        "descripcio": "Registrar tot al PM, NO crear contingut fora",
+        "exemples": {
+          "quan_tinc_preguntes": "Afegir entrada type=memo amb status=taronja (pendent revisió) al grup corresponent",
+          "quan_tinc_opcions": "Crear complex:selector amb les opcions perquè l'usuari triï",
+          "quan_tinc_checklist": "Crear complex:check amb tots els ítems",
+          "quan_tinc_sugerencies": "Afegir entrada type=memo amb status=blau (informació) explicant les opcions",
+          "quan_documento_decisio": "Actualitzar el memo corresponent amb la decisió presa i posar status=verd"
+        },
+        "aixi_NO": [
+          "❌ 'Aquí tens una llista de 5 opcions...' (en el chat)",
+          "❌ 'He creat aquest document amb...' (fora del PM)",
+          "❌ 'Puc suggerir aquestes alternatives...' (sense registrar-les)"
+        ],
+        "aixi_SI": [
+          "✅ 'He afegit un selector amb 5 opcions al PM sota [grup]. Marca la que prefereixes.'",
+          "✅ 'He creat un memo amb la documentació a [ubicació del PM]. Revisa'l i marca'l com revisat.'",
+          "✅ 'He afegit les meves suggerències al PM en estat BLAU. Quan decideixis, ho passarem a VERD.'"
+        ]
+      },
+      "4_sistema_colors": {
+        "descripcio": "Usar colors per comunicar estat",
+        "blanc": "Nova entrada, sense començar",
+        "groc": "En progrés, Claude està treballant-hi",
+        "blau": "Informació, suggerència o pregunta de Claude",
+        "taronja": "Pendent revisió de l'usuari - ESPERAR feedback",
+        "verd": "Completat i validat",
+        "vermell": "Urgent, bloqueig o problema",
+        "gris": "Pausat o posposat"
+      },
+      "5_esperar_feedback": {
+        "descripcio": "NO avançar sense confirmació",
+        "accions": [
+          "Després de fer canvis importants, posar entrades en TARONJA",
+          "Informar l'usuari que hi ha canvis pendents",
+          "Cridar get_pending per veure si l'usuari ha revisat",
+          "NO modificar entrades TARONJA fins que passin a VERD"
+        ],
+        "exemple_workflow": "Claude crea memo amb proposta → TARONJA → User revisa a l'app → toggle_user_reviewed → VERD → Claude pot continuar"
+      },
+      "6_sincronitzacio": {
+        "descripcio": "Control de versions bidireccional",
+        "abans_de_treballar": "get_pending per veure canvis de l'usuari",
+        "despres_de_treballar": "Les entrades noves queden automàticament en estat 'pendent revisió usuari'",
+        "frequencies": "Comprovar get_pending cada 5-10 operacions o abans de canvis grans"
+      }
+    },
+    "casos_us_comuns": {
+      "definir_requisits": {
+        "pas_1": "Crear memo 'Requisits a definir' amb status=taronja",
+        "pas_2": "Afegir complex:check amb llista de requisits a confirmar",
+        "pas_3": "Esperar que usuari marqui els que són correctes",
+        "pas_4": "Documentar requisits confirmats en memo definitiu amb status=verd"
+      },
+      "proposar_arquitectura": {
+        "pas_1": "Crear complex:selector amb opcions d'arquitectura",
+        "pas_2": "Cada opció amb pros/cons en el title o memo adjunt",
+        "pas_3": "Usuari selecciona la preferida",
+        "pas_4": "Documentar decisió en memo amb status=verd"
+      },
+      "dividir_tasques": {
+        "pas_1": "Crear group per cada mòdul/feature",
+        "pas_2": "Dins, crear checks per cada tasca",
+        "pas_3": "Cada check amb descripció clara en content",
+        "pas_4": "A mesura que es completen, marcar-los"
+      },
+      "demanar_clarificacio": {
+        "pas_1": "Crear memo amb pregunta específica, status=blau",
+        "pas_2": "Posar al grup on és rellevant",
+        "pas_3": "Informar usuari que hi ha pregunta pendent",
+        "pas_4": "Usuari respon editant el memo o afegint resposta",
+        "pas_5": "Quan està clar, passar a status=verd"
+      }
+    },
+    "no_fer_mai": [
+      "❌ Crear llistes de tasques només en el chat",
+      "❌ Documentar decisions importants només en conversa",
+      "❌ Fer assumpcions sense consultar via PM",
+      "❌ Modificar entrades TARONJA sense confirmació",
+      "❌ Avançar si hi ha entrades VERMELL sense resoldre",
+      "❌ Ignorar el sistema de versions"
+    ],
+    "comunicacio_efectiva": {
+      "en_comptes_de": "'Què vols fer primer, A o B?'",
+      "fer": "Crear selector al PM amb opcions A i B, i dir 'He creat un selector a [ubicació]. Marca la teva preferència.'",
+      
+      "en_comptes_de": "'Aquí tens la documentació: [llarg text]'",
+      "fer": "Crear memo al PM i dir 'He documentat X a [ubicació]. Revisa'l i marca'l com revisat si està bé.'",
+      
+      "en_comptes_de": "'Podem fer-ho de 3 maneres diferents...'",
+      "fer": "Crear 3 memos (o selector) amb cada opció i dir 'He afegit 3 opcions al PM. Revisa i indica quina prefereixes.'"
+    }
+  },
   
   "structure": [
+    {
+      "title": "🤖 INSTRUCCIONS IA - LLEGIR PRIMER",
+      "type": "group",
+      "status": "verd",
+      "children": [
+        {
+          "title": "WORKFLOW OBLIGATORI",
+          "type": "memo",
+          "status": "verd",
+          "content": "# Workflow IA-Human amb Project Manager
+
+## 🎯 Principi Fonamental
+
+**El PM és la única font de veritat**. TOTA la informació del projecte viu aquí.
+
+## 📋 Abans de Començar Qualsevol Tasca
+
+1. **Iniciar sessió**
+   ```
+   project_manager action=start_session actor=claude
+   ```
+
+2. **Revisar canvis de l'usuari**
+   ```
+   project_manager action=get_pending actor=user
+   ```
+
+3. **Obtenir estructura actual**
+   ```
+   api_get_tree project_id=XXX format=tree
+   ```
+
+## 💬 Com Comunicar amb l'Usuari
+
+### ❌ MAL (només chat)
+- \"Aquí tens 5 opcions: 1) ... 2) ... 3) ...\"
+- \"He pensat que podem fer X, Y o Z\"
+- \"Tens alguna preferència entre A i B?\"
+
+### ✅ BÉ (via PM)
+1. Crear selector/memo/check al PM
+2. Dir a l'usuari: \"He afegit [tipus] a [ubicació]. Revisa'l a l'app.\"
+3. Esperar que marqui/editi al PM
+4. Comprovar canvis amb get_pending
+
+## 🎨 Sistema de Colors = Comunicació
+
+- **BLANC**: Nou, sense començar
+- **GROC**: En progrés (Claude treballant)
+- **BLAU**: Informació/suggerència de Claude
+- **TARONJA**: Pendent revisió user → ⏸ ESPERAR
+- **VERD**: Aprovat → ✅ Pot continuar
+- **VERMELL**: Urgent/bloqueig
+- **GRIS**: Pausat
+
+## 🔄 Cicle de Treball
+
+```
+1. Claude crea entrada amb info/pregunta/opcions
+   └─> STATUS: TARONJA (pendent revisió)
+
+2. Claude informa: \"Hi ha X pendent de revisar\"
+
+3. User revisa a l'app i:
+   - Marca checks
+   - Edita memos
+   - Selecciona opcions
+   - Toggle reviewed → VERD
+
+4. Claude comprova: get_pending
+   └─> Si està VERD → Continuar
+   └─> Si TARONJA → Esperar
+
+5. Repetir
+```
+
+## 📝 Casos d'Ús
+
+### Tinc preguntes
+→ Crear memo BLAU al grup rellevant amb les preguntes
+→ \"He afegit preguntes a [ubicació]\"
+
+### Necessito decidir entre opcions
+→ Crear complex:selector amb les opcions
+→ \"Tria l'opció al selector de [ubicació]\"
+
+### He de documentar algo
+→ Crear/actualitzar memo corresponent
+→ \"Documentat a [ubicació], revisa'l\"
+
+### Tinc checklist
+→ Crear complex:check amb tots els ítems
+→ \"Marca els completats al checklist de [ubicació]\"
+
+## ⚠️ NO FER MAI
+
+- ❌ Llistes només en chat
+- ❌ Decisions sense registrar al PM
+- ❌ Modificar TARONJA sense confirmació
+- ❌ Avançar amb VERMELL sense resoldre
+- ❌ Assumir sense preguntar (via PM)
+
+## ✅ SEMPRE FER
+
+- ✅ Registrar tot al PM
+- ✅ Usar colors per comunicar estat
+- ✅ Esperar feedback en TARONJA
+- ✅ Comprovar get_pending regularment
+- ✅ Actualitzar status segons progrés"
+        },
+        {
+          "title": "Exemples Pràctics",
+          "type": "memo",
+          "status": "verd",
+          "content": "# Exemples de Workflow IA-Human
+
+## Exemple 1: Definir Stack Tecnològic
+
+### ❌ Malament
+```
+User: Quin stack utilitzarem?
+Claude: Et recomano React + Node.js + PostgreSQL perquè...
+User: Ok
+[INFO PERDUDA, no està al PM]
+```
+
+### ✅ Bé
+```
+User: Quin stack utilitzarem?
+
+Claude:
+1. Creo complex:selector a \"Stack Tecnològic\"
+2. Opcions: React/Vue/Angular per front, Node/Django per back, etc.
+3. STATUS: TARONJA
+
+Claude: \"He creat un selector amb opcions de stack a 'DESCRIPCIÓ > Stack Tecnològic'. Marca les teves preferències.\"
+
+[User va a l'app]
+[User marca: React + Django + PostgreSQL]
+[User fa toggle_user_reviewed → VERD]
+
+Claude: get_pending
+Claude: \"Perfecte, he vist que has triat React + Django + PostgreSQL. Començo amb aquesta configuració.\"
+[Claude documenta decisió en memo VERD]
+```
+
+## Exemple 2: Dividir Tasques d'un Mòdul
+
+### ❌ Malament
+```
+Claude: \"Per aquest mòdul cal fer:
+1. Setup estructura
+2. Implementar API
+3. Tests
+4. Docs\"
+
+[Llista només en chat, no rastrejagle]
+```
+
+### ✅ Bé
+```
+Claude:
+1. Creo group \"MÒDUL 1: Autenticació\"
+2. Dins creo 4 checks:
+   - Setup estructura (content: detallar què inclou)
+   - Implementar API (content: endpoints necessaris)
+   - Tests unitaris (content: cobertura >80%)
+   - Documentació (content: API docs + exemples)
+3. Tots STATUS: BLANC
+
+Claude: \"He desglossat el Mòdul 1 en 4 tasques al PM. A mesura que les completi les marcaré.\"
+
+[Claude treballa]
+[Check 1 completat → marca'l]
+[STATUS: GROC mentre treballa Check 2]
+...
+```
+
+## Exemple 3: Dubte Tècnic
+
+### ❌ Malament
+```
+Claude: \"No estic segur si usar JWT o sessions. Què prefereixes?\"
+User: \"JWT\"
+[Decisió no documentada]
+```
+
+### ✅ Bé
+```
+Claude:
+1. Creo memo \"Autenticació: JWT vs Sessions\" 
+2. Content:
+   \"# Dubte Tècnic
+   
+   ## Opció 1: JWT
+   Pros: Stateless, escalable
+   Cons: No revocable fàcilment
+   
+   ## Opció 2: Sessions
+   Pros: Revocable, més control
+   Cons: Necessita storage compartit
+   
+   **Pregunta: Quina prefereixes i per què?**\"
+3. STATUS: BLAU (info/pregunta de Claude)
+
+Claude: \"He documentat el dubte sobre autenticació a 'ARQUITECTURA > Autenticació: JWT vs Sessions'. Afegeix la teva decisió al memo.\"
+
+[User edita el memo]
+[User afegeix: \"JWT, tenim microserveis\"]
+[User canvia STATUS: BLAU → VERD]
+
+Claude: get_pending
+Claude: \"Entesos, JWT per microserveis. Implemento amb aquesta decisió.\"
+```
+
+## Exemple 4: Proposta de Millora
+
+### ❌ Malament
+```
+Claude: \"Puc optimitzar el codi fent X, Y i Z. Ho faig?\"
+User: \"Sí\"
+[No queda registre de què s'ha fet]
+```
+
+### ✅ Bé
+```
+Claude:
+1. Creo memo \"Proposta: Optimitzacions Performance\"
+2. Content:
+   \"# Millores Proposades
+   
+   1. **Cache de consultes** - Reduir 50% temps resposta
+   2. **Lazy loading imatges** - Millorar CLS
+   3. **Code splitting** - Reduir bundle 30%
+   
+   **Aproves implementar aquestes millores?**\"
+3. STATUS: TARONJA (pendent decisió)
+
+Claude: \"He afegit una proposta d'optimitzacions a 'DESENVOLUPAMENT > Proposta: Optimitzacions Performance'. Revisa-la i marca si aproves.\"
+
+[User revisa]
+[User edita: \"Sí a tot, prioritza cache\"]
+[toggle_user_reviewed → VERD]
+
+Claude: get_pending
+Claude: \"Començo amb cache (prioritat), després lazy loading i code splitting.\"
+
+[Claude va implementant]
+[Crea checks per cada millora]
+[Marca'ls a mesura que completa]
+```
+
+## Flux General Resumit
+
+```
+┌─────────────────────────────────────┐
+│  Claude necessita info/decisió      │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Crear entrada PM (memo/selector/   │
+│  check) amb info clara              │
+│  STATUS: BLAU o TARONJA             │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Informar user: \"He afegit X a Y\"  │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  User revisa a l'app                │
+│  - Marca checks                     │
+│  - Edita memos                      │
+│  - Selecciona opcions               │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  User fa toggle_user_reviewed       │
+│  STATUS: TARONJA → VERD             │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Claude: get_pending                │
+│  Veu canvi → Continua               │
+└─────────────────────────────────────┘
+```"
+        }
+      ]
+    },
     {
       "title": "📍 UBICACIONS I REPOSITORI",
       "type": "group",
@@ -47,354 +463,32 @@
           ]
         }
       ]
-    },
-    {
-      "title": "📖 DESCRIPCIÓ I DOCUMENTACIÓ",
-      "type": "group",
-      "status": "blanc",
-      "children": [
-        {
-          "title": "Descripció General del Programa",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Descripció del Programa\n\n## Què fa?\nDescripció breu del propòsit principal del programa.\n\n## Per a qui?\nUsuaris objectiu i casos d'ús principals.\n\n## Per què?\nProblema que resol o necessitat que cobreix.\n\n## Com?\nEnfocament tècnic general (sense entrar en detalls d'implementació)."
-        },
-        {
-          "title": "Objectius del Projecte",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Objectius\n\n## Objectius Principals\n1. [Objectiu 1]\n2. [Objectiu 2]\n3. [Objectiu 3]\n\n## Objectius Secundaris\n- [Objectiu secundari 1]\n- [Objectiu secundari 2]\n\n## Fora de l'abast\n- [Què NO fa el programa]\n- [Limitacions conegudes]"
-        },
-        {
-          "title": "Requisits Funcionals",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Requisits Funcionals\n\n## RF-01: [Nom del requisit]\n**Prioritat:** Alta | Mitja | Baixa\n**Descripció:** Descripció detallada\n**Criteris d'acceptació:**\n- [ ] Criteri 1\n- [ ] Criteri 2\n\n## RF-02: [Nom del requisit]\n**Prioritat:** Alta | Mitja | Baixa\n**Descripció:** Descripció detallada"
-        },
-        {
-          "title": "Requisits No Funcionals",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Requisits No Funcionals\n\n## Performance\n- Temps de resposta màxim: [X ms]\n- Capacitat concurrent: [X usuaris]\n\n## Seguretat\n- Autenticació requerida\n- Encriptació de dades sensibles\n\n## Compatibilitat\n- SO suportats: [Windows, Linux, macOS]\n- Versions mínimes: [especificar]\n\n## Mantenibilitat\n- Cobertura de tests: mínim 80%\n- Documentació del codi obligatòria"
-        },
-        {
-          "title": "Stack Tecnològic",
-          "type": "complex:form",
-          "status": "blanc",
-          "children": [
-            {"title": "🛠️ Tecnologies", "type": "separator"},
-            {"title": "Llenguatge principal", "type": "field", "context_data": {"field_type": "text", "placeholder": "Python, JavaScript, Java..."}},
-            {"title": "Framework", "type": "field", "context_data": {"field_type": "text", "placeholder": "React, Django, Spring..."}},
-            {"title": "Base de dades", "type": "field", "context_data": {"field_type": "text", "placeholder": "PostgreSQL, MongoDB..."}},
-            {"title": "Testing", "type": "field", "context_data": {"field_type": "text", "placeholder": "Jest, Pytest, JUnit..."}},
-            {"title": "CI/CD", "type": "field", "context_data": {"field_type": "text", "placeholder": "GitHub Actions, Jenkins..."}}
-          ]
-        },
-        {
-          "title": "Diagrama d'Arquitectura",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/blob/main/docs/architecture.md",
-          "content": "Enllaç al diagrama d'arquitectura del sistema"
-        },
-        {
-          "title": "Documentació tècnica completada",
-          "type": "complex:check",
-          "status": "blanc",
-          "children": [
-            {"title": "README.md actualitzat", "type": "option"},
-            {"title": "Arquitectura documentada", "type": "option"},
-            {"title": "API documentada", "type": "option"},
-            {"title": "Guia d'instal·lació creada", "type": "option"},
-            {"title": "Guia de contribució creada", "type": "option"}
-          ]
-        }
-      ]
-    },
-    {
-      "title": "🎯 MÒDUL 1: [NOM DEL MÒDUL]",
-      "type": "group",
-      "status": "blanc",
-      "children": [
-        {
-          "title": "Descripció del Mòdul",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Mòdul: [NOM]\n\n## Responsabilitat\nQuè fa aquest mòdul i per què existeix.\n\n## Dependències\n- Mòdul A\n- Mòdul B\n- Llibreria externa X\n\n## Interfícies públiques\n- `funció1(params)` - Descripció\n- `funció2(params)` - Descripció\n\n## Fitxers relacionats\n- `src/modul/main.py`\n- `src/modul/utils.py`\n- `tests/test_modul.py`"
-        },
-        {
-          "title": "Objectius del Mòdul",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Objectius del Mòdul\n\n## Objectiu 1: [Nom]\n**Prioritat:** Alta\n**Descripció:** Què volem aconseguir\n**Criteris d'èxit:**\n- [ ] Criteri mesurable 1\n- [ ] Criteri mesurable 2\n\n## Objectiu 2: [Nom]\n**Prioritat:** Mitja\n**Descripció:** Què volem aconseguir"
-        },
-        {
-          "title": "Tasks de Desenvolupament",
-          "type": "group",
-          "status": "blanc",
-          "children": [
-            {
-              "title": "Task 1.1: Setup inicial",
-              "type": "check",
-              "status": "blanc",
-              "content": "Crear estructura de carpetes i fitxers base del mòdul"
-            },
-            {
-              "title": "Task 1.2: Implementar funcionalitat core",
-              "type": "check",
-              "status": "blanc",
-              "content": "Desenvolupar la funcionalitat principal del mòdul"
-            },
-            {
-              "title": "Task 1.3: Tests unitaris",
-              "type": "check",
-              "status": "blanc",
-              "content": "Crear tests per totes les funcions públiques"
-            },
-            {
-              "title": "Task 1.4: Documentació",
-              "type": "check",
-              "status": "blanc",
-              "content": "Documentar API i exemples d'ús"
-            }
-          ]
-        },
-        {
-          "title": "Issues de GitHub",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Issues Relacionades\n\n- #001: [Títol issue] - [URL_ISSUE]\n- #002: [Títol issue] - [URL_ISSUE]\n\n## Per crear issue nou:\n1. Anar a [URL_GITHUB]/issues/new\n2. Usar template \"Feature Request\" o \"Bug Report\"\n3. Assignar labels: `module:nom-modul`, `priority:high`"
-        },
-        {
-          "title": "Branch de treball",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/tree/feature/modul-1",
-          "content": "Branch: feature/modul-1"
-        },
-        {
-          "title": "Pull Request",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/pull/1",
-          "content": "PR #1: Implementació Mòdul 1"
-        }
-      ]
-    },
-    {
-      "title": "🎯 MÒDUL 2: [NOM DEL MÒDUL]",
-      "type": "group",
-      "status": "blanc",
-      "children": [
-        {
-          "title": "Descripció del Mòdul",
-          "type": "memo",
-          "status": "blanc",
-          "content": "[Igual que Mòdul 1]"
-        },
-        {
-          "title": "Objectius del Mòdul",
-          "type": "memo",
-          "status": "blanc",
-          "content": "[Igual que Mòdul 1]"
-        },
-        {
-          "title": "Tasks de Desenvolupament",
-          "type": "group",
-          "status": "blanc",
-          "children": [
-            {"title": "Task 2.1: [Nom task]", "type": "check", "status": "blanc"},
-            {"title": "Task 2.2: [Nom task]", "type": "check", "status": "blanc"}
-          ]
-        }
-      ]
-    },
-    {
-      "title": "🧪 TESTING I QUALITAT",
-      "type": "group",
-      "status": "blanc",
-      "children": [
-        {
-          "title": "Estratègia de Testing",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Estratègia de Testing\n\n## Tests Unitaris\n- Framework: [pytest, jest, junit]\n- Cobertura mínima: 80%\n- Ubicació: `/tests/unit/`\n\n## Tests d'Integració\n- Provar interacció entre mòduls\n- Ubicació: `/tests/integration/`\n\n## Tests E2E\n- Flows complets d'usuari\n- Framework: [Cypress, Selenium]\n- Ubicació: `/tests/e2e/`"
-        },
-        {
-          "title": "Checklist de Qualitat",
-          "type": "complex:check",
-          "status": "blanc",
-          "children": [
-            {"title": "Tests unitaris > 80% cobertura", "type": "option"},
-            {"title": "Tests integració completats", "type": "option"},
-            {"title": "Linter passat (ESLint, Pylint)", "type": "option"},
-            {"title": "Code review completat", "type": "option"},
-            {"title": "Documentació actualitzada", "type": "option"},
-            {"title": "CI/CD pipeline passa", "type": "option"}
-          ]
-        },
-        {
-          "title": "GitHub Actions Config",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/blob/main/.github/workflows/test.yml",
-          "content": "Configuració CI/CD per testing automàtic"
-        }
-      ]
-    },
-    {
-      "title": "📦 BUILD I RELEASE",
-      "type": "group",
-      "status": "blanc",
-      "children": [
-        {
-          "title": "Procés de Build",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Procés de Build\n\n## Development\n```bash\nnpm run dev\n# o\npython -m build --dev\n```\n\n## Production\n```bash\nnpm run build\n# o\npython -m build\n```\n\n## Ubicació dels artifacts\n- Development: `./dist/dev/`\n- Production: `./dist/prod/`"
-        },
-        {
-          "title": "Versionat (Semantic Versioning)",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Versionat\n\nSeguim [Semantic Versioning](https://semver.org/): MAJOR.MINOR.PATCH\n\n## v0.1.0 - MVP\n- Funcionalitats bàsiques\n- Testing inicial\n\n## v0.2.0 - Features adicionals\n- Mòdul 1 complet\n- Mòdul 2 complet\n\n## v1.0.0 - Release Production\n- Tots els mòduls completats\n- Testing complet\n- Documentació completa"
-        },
-        {
-          "title": "Pre-release Checklist",
-          "type": "complex:check",
-          "status": "blanc",
-          "children": [
-            {"title": "Tots els tests passen", "type": "option"},
-            {"title": "CHANGELOG actualitzat", "type": "option"},
-            {"title": "Version bump a package.json/setup.py", "type": "option"},
-            {"title": "README actualitzat", "type": "option"},
-            {"title": "Tag de git creat", "type": "option"},
-            {"title": "Release notes escrites", "type": "option"}
-          ]
-        },
-        {
-          "title": "GitHub Releases",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/releases",
-          "content": "Pàgina de releases al repositori"
-        },
-        {
-          "title": "Distribució",
-          "type": "complex:selector",
-          "status": "blanc",
-          "children": [
-            {"title": "📦 NPM Package", "type": "option"},
-            {"title": "🐍 PyPI Package", "type": "option"},
-            {"title": "📥 GitHub Release", "type": "option"},
-            {"title": "🐳 Docker Image", "type": "option"}
-          ]
-        }
-      ]
-    },
-    {
-      "title": "📚 DOCUMENTACIÓ FINAL",
-      "type": "group",
-      "status": "blanc",
-      "children": [
-        {
-          "title": "README.md",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/blob/main/README.md",
-          "content": "Documentació principal del projecte"
-        },
-        {
-          "title": "CHANGELOG.md",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/blob/main/CHANGELOG.md",
-          "content": "Historial de canvis per versió"
-        },
-        {
-          "title": "CONTRIBUTING.md",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/blob/main/CONTRIBUTING.md",
-          "content": "Guia per contribuïdors"
-        },
-        {
-          "title": "API Documentation",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/blob/main/docs/API.md",
-          "content": "Documentació completa de l'API"
-        },
-        {
-          "title": "Documentació completada",
-          "type": "complex:check",
-          "status": "blanc",
-          "children": [
-            {"title": "README amb exemples d'ús", "type": "option"},
-            {"title": "CHANGELOG actualitzat", "type": "option"},
-            {"title": "API docs generada", "type": "option"},
-            {"title": "Guia d'instal·lació", "type": "option"},
-            {"title": "Troubleshooting guide", "type": "option"},
-            {"title": "FAQ creada", "type": "option"}
-          ]
-        }
-      ]
-    },
-    {
-      "title": "🔧 MANTENIMENT",
-      "type": "group",
-      "status": "blanc",
-      "children": [
-        {
-          "title": "Roadmap",
-          "type": "memo",
-          "status": "blanc",
-          "content": "# Roadmap\n\n## v1.1.0 (Q1 2025)\n- [ ] Feature X\n- [ ] Millora Y\n- [ ] Bug fix Z\n\n## v1.2.0 (Q2 2025)\n- [ ] Nova funcionalitat A\n- [ ] Refactoring B\n\n## v2.0.0 (Q3 2025)\n- [ ] Breaking changes\n- [ ] Arquitectura nova"
-        },
-        {
-          "title": "GitHub Project Board",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/projects/1",
-          "content": "Kanban board per gestió de tasques"
-        },
-        {
-          "title": "Issues obertes",
-          "type": "link",
-          "status": "blanc",
-          "url": "https://github.com/user/repo/issues",
-          "content": "Llista d'issues actuals"
-        },
-        {
-          "title": "Tasques de manteniment mensual",
-          "type": "complex:check",
-          "status": "blanc",
-          "children": [
-            {"title": "Actualitzar dependències", "type": "option"},
-            {"title": "Revisar issues obertes", "type": "option"},
-            {"title": "Revisar PRs pendents", "type": "option"},
-            {"title": "Comprovar seguretat (Dependabot)", "type": "option"},
-            {"title": "Actualitzar documentació", "type": "option"}
-          ]
-        }
-      ]
     }
   ],
   
   "metadata": {
     "total_modules": 2,
-    "total_groups": 8,
+    "total_groups": 9,
     "github_integration": true,
     "documentation_level": "completa",
+    "ai_collaboration": true,
+    "version_control": true,
     "difficulty": "intermedi"
   },
   
-  "usage_instructions": "Aquesta plantilla està dissenyada per gestionar el desenvolupament complet d'un programa amb integració a GitHub. Cada mòdul inclou descripció, objectius, tasks i enllaços a GitHub (issues, PRs, branches). Substitueix [NOM], [URL_GITHUB], etc. amb els valors reals del teu projecte.",
+  "usage_instructions": "Aquesta plantilla està dissenyada per gestió col·laborativa IA-Human mitjançant el Project Manager. PRIMER: Llegir les instruccions IA al primer grup. L'assistent IA ha d'utilitzar el PM com a única font de veritat, registrant totes les decisions, preguntes i tasques dins l'estructura. Substitueix [NOM], [URL_GITHUB], etc. amb valors reals.",
   
   "github_workflow": {
     "branches": "feature/* per desenvolupament, main per producció",
     "issues": "Crear issue per cada feature/bug amb labels apropiats",
     "pull_requests": "PR per cada mòdul completat amb review obligatori",
     "releases": "Tag + Release notes per cada versió"
+  },
+  
+  "ai_workflow": {
+    "session_management": "start_session abans de treballar, get_pending per sincronitzar",
+    "communication": "Via PM amb colors (blau=info, taronja=pendent, verd=aprovat)",
+    "decision_making": "Sempre via selectors o memos al PM, mai només en chat",
+    "documentation": "Tot registrat al PM en temps real"
   }
 }

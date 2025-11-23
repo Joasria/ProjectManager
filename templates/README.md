@@ -4,8 +4,16 @@ Aquesta carpeta conté plantilles reutilitzables per diferents tipus de projecte
 
 ## 📁 Plantilles Disponibles
 
-### 1. **desenvolupament-programa.json**
-**Propòsit:** Gestionar el desenvolupament complet d'un programa/aplicació
+### 1. **desenvolupament-programa.json** ⭐ ACTUALITZAT v1.1
+**Propòsit:** Gestionar el desenvolupament complet d'un programa/aplicació amb workflow col·laboratiu IA-Human
+
+**NOVETATS v1.1:**
+- 🤖 **Instruccions completes per a l'assistent IA** al primer grup
+- 📋 Workflow obligatori IA-Human via Project Manager
+- 🎨 Sistema de colors com a comunicació (blanc/groc/blau/taronja/verd/vermell/gris)
+- 💬 Exemples pràctics de com l'IA ha de comunicar decisions
+- ⏸ Protocol d'espera de feedback de l'usuari
+- 🔄 Cicle complet: crear entrada → TARONJA → user revisa → VERD → continuar
 
 **Característiques:**
 - ✅ Integració completa amb GitHub (issues, PRs, branches, releases)
@@ -14,10 +22,12 @@ Aquesta carpeta conté plantilles reutilitzables per diferents tipus de projecte
 - ✅ Testing i qualitat de codi
 - ✅ Build, release i versionat
 - ✅ Manteniment i roadmap
+- ✅ **Workflow IA: El PM és la única font de veritat**
 
-**Ideal per:** Projectes de software amb Git, equips de desenvolupament, projectes amb múltiples mòduls
+**Ideal per:** Projectes de software amb Git, col·laboració IA-Human, equips de desenvolupament, projectes amb múltiples mòduls
 
 **Inclou:**
+- 🤖 **INSTRUCCIONS IA** - Workflow obligatori i exemples
 - 📍 Ubicacions (local/remot/GitHub)
 - 📖 Descripció i documentació completa
 - 🎯 Mòduls amb objectius i tasks
