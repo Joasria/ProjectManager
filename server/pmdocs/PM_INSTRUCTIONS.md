@@ -156,19 +156,160 @@ Referència a recurs extern
 
 ---
 
-## 🎨 SISTEMA D'ESTATS
+## 🎨 SISTEMA DE COLORS
 
-| Color | Significat |
-|-------|------------|
-| ⚪ blanc | Nou/sense processar |
-| 🟡 groc | Treballant activament |
-| 🔘 gris | Processat però inactiu |
-| 🔴 vermell | Erroni/bloquejat |
-| 🔵 blau | Usuari ha validat proposta |
-| 🟠 taronja | Claude ha incorporat actualització |
-| 🟢 verd | Completat/consensuat |
+### **Significat de cada color:**
 
-**Flux:** blanc → groc → blau/taronja → verd
+| Color | Emoji | Significat | Ús |
+|-------|-------|------------|----|
+| **BLANC** | ⚪ | Nou / Sense començar | Entrada nova, estructura generada inicial |
+| **GROC** | 🟡 | En treball actiu | "Estem treballant aquí ara mateix" |
+| **BLAU** | 🔵 | User ha modificat | "He canviat/afegit això, IA revisa-ho" |
+| **TARONJA** | 🟠 | IA ha modificat | "He canviat/afegit això, User revisa-ho" |
+| **VERD** | 🟢 | Aprovat / Completat | Consensuat per ambdós, no cal tocar més |
+| **GRIS** | 🔘 | Pausat temporalment | Era GROC, però ara treballem en altra cosa |
+| **VERMELL** | 🔴 | Problema / Bloqueig | Decisió pendent, error, atenció requerida |
+
+### **Fluxos de treball:**
+
+#### **Flux 1: IA treballa en un apartat**
+```
+BLANC (estructura inicial)
+  ↓
+GROC (IA comença a treballar aquí)
+  ↓
+[IA fa canvis] → TARONJA ("revisa això")
+  ↓
+[User revisa i aprova] → VERD (fet)
+```
+
+#### **Flux 2: User fa canvis**
+```
+BLANC/GROC
+  ↓
+[User edita/crea node] → BLAU ("revisa això")
+  ↓
+[IA revisa i aprova] → VERD (consensuat)
+```
+
+#### **Flux 3: Canviar de focus de treball**
+```
+GROC (treballant aquí)
+  ↓
+[Canviem a treballar en altre apartat]
+  ↓
+GRIS (aquest apartat queda pausat)
+
+NOTA: VERD, VERMELL, BLAU, TARONJA NO canvien a GRIS
+Només GROC → GRIS quan pausem el treball actiu
+```
+
+#### **Flux 4: Detectar problema**
+```
+Qualsevol color
+  ↓
+[Detectem error / bloqueig / decisió pendent]
+  ↓
+VERMELL (problema a resoldre)
+  ↓
+[Resolem el problema]
+  ↓
+GROC o VERD segons correspongui
+```
+
+### **Exemples pràctics:**
+
+**Exemple 1: IA documenta requisits**
+```
+📋 Requisits (BLANC inicial)
+  ↓ IA comença a documentar
+📋 Requisits (GROC - treballant)
+  ↓ IA afegeix contingut al memo
+📋 Requisits (TARONJA - "revisa això")
+  ↓ User llegeix i aprova
+📋 Requisits (VERD - aprovat)
+```
+
+**Exemple 2: User defineix arquitectura**
+```
+🏗️ Arquitectura (BLANC)
+  ↓ User crea memo amb proposta
+🏗️ Arquitectura (BLAU - "revisa això")
+  ↓ IA llegeix i valida
+🏗️ Arquitectura (VERD - consensuat)
+```
+
+**Exemple 3: Treballar en múltiples mòduls**
+```
+Estat inicial:
+├─ 📋 Documentació (BLANC)
+├─ 🎯 Mòdul 1 (BLANC)
+└─ 🎯 Mòdul 2 (BLANC)
+
+Comença treball:
+├─ 📋 Documentació (GROC) ← treballant aquí
+├─ 🎯 Mòdul 1 (BLANC)
+└─ 🎯 Mòdul 2 (BLANC)
+
+Canvi de focus:
+├─ 📋 Documentació (GRIS) ← pausat
+├─ 🎯 Mòdul 1 (GROC) ← ara treballant aquí
+└─ 🎯 Mòdul 2 (BLANC)
+
+Documentació aprovada:
+├─ 📋 Documentació (VERD) ← ja no és GRIS, és VERD
+├─ 🎯 Mòdul 1 (GROC)
+└─ 🎯 Mòdul 2 (BLANC)
+```
+
+**Exemple 4: Problema bloquejar**
+```
+🎯 Mòdul 1 (GROC - treballant)
+  ↓ Descobrim que falta decidir algo crític
+🎯 Mòdul 1 (VERMELL - bloqueig!)
+  └─ ❓ Decisió: JWT vs Sessions (VERMELL)
+  ↓ User decideix: JWT
+❓ Decisió: JWT vs Sessions (BLAU - user ha decidit)
+  ↓ IA valida decisió
+❓ Decisió: JWT vs Sessions (VERD - decidit)
+🎯 Mòdul 1 (GROC - podem continuar)
+```
+
+### **Regles del sistema:**
+
+1. **BLANC** = Punt de partida, sense processar
+2. **GROC** = "Estem treballant aquí ara"
+3. **TARONJA** = "IA ha fet canvis, user revisa"
+4. **BLAU** = "User ha fet canvis, IA revisa"
+5. **VERD** = "Aprovat per ambdós, completat"
+6. **GRIS** = "Era GROC, però hem pausat per treballar en altra cosa"
+7. **VERMELL** = "STOP: problema/decisió pendent"
+
+### **Transicions vàlides:**
+
+```
+BLANC → GROC      (començar a treballar)
+BLANC → BLAU      (user crea/edita directament)
+
+GROC → TARONJA    (IA fa canvis)
+GROC → BLAU       (user fa canvis)
+GROC → GRIS       (pausar treball)
+GROC → VERMELL    (detectar problema)
+
+TARONJA → VERD    (user aprova)
+TARONJA → VERMELL (user detecta problema)
+
+BLAU → VERD       (IA aprova)
+BLAU → VERMELL    (IA detecta problema)
+
+GRIS → GROC       (reprendre treball)
+
+VERMELL → GROC    (problema resolt, reprendre)
+VERMELL → VERD    (problema resolt, ja està fet)
+
+VERD → BLAU       (user fa modificacions posteriors)
+VERD → TARONJA    (IA fa modificacions posteriors)
+```
 
 ---
 
